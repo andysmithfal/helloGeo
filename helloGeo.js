@@ -2,15 +2,23 @@ Tasks = new Mongo.Collection("tasks");
 
 if (Meteor.isClient) {
   // This code only runs on the client
+  var people = new Array();
+
+  Meteor.startup(function() {
+    GoogleMaps.load();
+  });
+
   Template.body.helpers({
     tasks: function () {
       if (Session.get("hideCompleted")) {
         // If hide completed is checked, filter tasks
-        return Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}});
+        var tasks = Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}})
       } else {
         // Otherwise, return all of the tasks
-        return Tasks.find({}, {sort: {createdAt: -1}});
-      }
+        var tasks = Tasks.find({}, {sort: {createdAt: -1}});
+      } 
+        return tasks;
+
     },
     hideCompleted: function () {
       return Session.get("hideCompleted");
@@ -21,7 +29,17 @@ if (Meteor.isClient) {
     loc: function () {
       // return 0, 0 if the location isn't ready
       return Geolocation.latLng() || { lat: 0, lng: 0 };
+    },
+    exampleMapOptions: function() {
+    // Make sure the maps API has loaded
+    if (GoogleMaps.loaded()) {
+      // Map initialization options
+      return {
+        center: new google.maps.LatLng(50,-5),
+        zoom: 8
+      };
     }
+  }
   });
 
   Template.body.events({
@@ -73,6 +91,24 @@ if (Meteor.isClient) {
     "click .delete": function () {
       Tasks.remove(this._id);
     }
+  });
+
+  Template.body.onCreated(function() {
+    // We can use the `ready` callback to interact with the map API once the map is ready.
+    GoogleMaps.ready('exampleMap', function(map) {
+      // Add a marker to the map once it's ready
+      var tasks = Tasks.find().fetch();
+      console.dir(tasks);
+      for(i = 0; i < tasks.length; i++){
+        console.log(tasks[i].lat);
+        var latlng = new google.maps.LatLng(tasks[i].lat,tasks[i].lng);
+        var marker = new google.maps.Marker({
+          position: latlng,
+          map: map.instance
+        });
+      }
+      
+    });
   });
 
   Accounts.ui.config({

@@ -17,7 +17,7 @@
 
       {{#if currentUser}}
         <form class="new-task">
-          <input type="text" name="text" placeholder="Type to add new tasks" />
+          <input type="text" name="text" placeholder="What are you doing right now?" />
         </form>
       {{/if}}
     </header>
@@ -28,6 +28,10 @@
       {{/each}}
     </ul>
   </div>
+
+  <div class="map-container">
+    {{> googleMap name="exampleMap" options=exampleMapOptions}}
+  </div>
 </body>
 
 <template name="task">
@@ -36,6 +40,6 @@
 
     <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
 
-    <span class="text"><strong>{{username}}</strong> - {{text}}</span>
+    <span class="text"><strong>{{username}}</strong> - {{text}}<span class="location">{{lat}},{{lng}}</span></span>
   </li>
 </template>
