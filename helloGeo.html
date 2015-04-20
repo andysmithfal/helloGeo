@@ -18,6 +18,7 @@
       {{#if currentUser}}
         <form class="new-task">
           <input type="text" name="text" placeholder="What are you doing right now?" />
+          <!--<input type="">-->
         </form>
       {{/if}}
     </header>
@@ -27,11 +28,12 @@
         {{> task}}
       {{/each}}
     </ul>
+    <div class="map-container">
+      {{> googleMap name="exampleMap" options=exampleMapOptions}}
+    </div>
   </div>
 
-  <div class="map-container">
-    {{> googleMap name="exampleMap" options=exampleMapOptions}}
-  </div>
+
 </body>
 
 <template name="task">

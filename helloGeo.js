@@ -2,7 +2,6 @@ Tasks = new Mongo.Collection("tasks");
 
 if (Meteor.isClient) {
   // This code only runs on the client
-  var people = new Array();
 
   Meteor.startup(function() {
     GoogleMaps.load();
@@ -35,8 +34,8 @@ if (Meteor.isClient) {
     if (GoogleMaps.loaded()) {
       // Map initialization options
       return {
-        center: new google.maps.LatLng(50,-5),
-        zoom: 8
+        center: new google.maps.LatLng(50.168399799999996,-5.1223081),
+        zoom: 13
       };
     }
   }
@@ -99,6 +98,12 @@ if (Meteor.isClient) {
       // Add a marker to the map once it's ready
       var tasks = Tasks.find().fetch();
       console.dir(tasks);
+
+
+      infowindow = new google.maps.InfoWindow({
+                content: "Loading..."
+            });
+
       for(i = 0; i < tasks.length; i++){
         console.log(tasks[i].lat);
         var latlng = new google.maps.LatLng(tasks[i].lat,tasks[i].lng);
@@ -106,12 +111,29 @@ if (Meteor.isClient) {
           position: latlng,
           map: map.instance
         });
+        console.log("marker "+i+": ");
+        console.dir(marker);
+        openInfoWindow(marker, map, tasks[i].username, tasks[i].createdAt, tasks[i].text);
       }
-      
+
+      function openInfoWindow(marker2, map, name, time, text){
+        google.maps.event.addListener(marker2, 'click', function() {
+          infowindow.setContent("<strong>"+name+"</strong><br>"+text+"<br>"+time);
+          console.dir(marker2);
+
+          infowindow.open(map.instance,marker2);
+          //infowindow.open();
+        });
+      }
+
     });
   });
 
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
-  });
+  }); 
+
+
+  //non-meteor globals
+  //var infowindow = null;
 }
