@@ -7,8 +7,10 @@
 meteor-platform
 autopublish
 insecure
-accounts-ui
 accounts-password
 mdg:geolocation
 dburles:google-maps
 iron:router
+momentjs:moment
+twbs:bootstrap
+ian:accounts-ui-bootstrap-3

@@ -14,19 +14,10 @@ if (Meteor.isClient) {
 
   Template.home.helpers({
     tasks: function () {
-      if (Session.get("hideCompleted")) {
-        // If hide completed is checked, filter tasks
-        return Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}})
-      } else {
-        // Otherwise, return all of the tasks
-        return Tasks.find({}, {sort: {createdAt: -1}});
-      }
+      return Tasks.find({}, {sort: {createdAt: -1}});
     },
-    hideCompleted: function () {
-      return Session.get("hideCompleted");
-    },
-    incompleteCount: function () {
-      return Tasks.find({checked: {$ne: true}}).count();
+    numberOfCheckins: function () {
+      return Tasks.find({}).count();
     },
     loc: function () {
       // return 0, 0 if the location isn't ready
@@ -41,6 +32,7 @@ if (Meteor.isClient) {
           center: new google.maps.LatLng(50.158399799999996,-5.0923081),
           zoom: 13,
           disableDefaultUI: true,
+          zoomControl: true,
           styles: [
             {
               "stylers": [
@@ -89,7 +81,7 @@ if (Meteor.isClient) {
       // This function is called when the new task form is submitted
       var text = event.target.text.value;
       var location = Geolocation.latLng();
-
+      var type = event.target.performanceType.value;
       var successfulLocation = false;
 
       if(location == null){
@@ -108,7 +100,8 @@ if (Meteor.isClient) {
           owner: Meteor.userId(),           // _id of logged in user
           username: Meteor.user().username,  // username of logged in user
           lat: location.lat,  //latitude
-          lng: location.lng   //longitude
+          lng: location.lng,   //longitude
+          performanceType: type //performance type
         });
 
       }
@@ -119,20 +112,18 @@ if (Meteor.isClient) {
 
       // Prevent default form submit
       return false;
-    },
-    "change .hide-completed input": function (event) {
-      console.log("click!");
-      Session.set("hideCompleted", event.target.checked);
     }
   });
 
   Template.task.events({
-    "click .toggle-checked": function () {
-      // Set the checked property to the opposite of its current value
-      Tasks.update(this._id, {$set: {checked: ! this.checked}});
-    },
     "click .delete": function () {
       Tasks.remove(this._id);
+    }
+  });
+
+  Template.task.helpers({
+    date: function(){
+      return moment(this.createdAt).fromNow();
     }
   });
 
@@ -149,9 +140,27 @@ if (Meteor.isClient) {
 
       for(i = 0; i < tasks.length; i++){
         var latlng = new google.maps.LatLng(tasks[i].lat,tasks[i].lng);
+
+        var icon;
+
+        switch(tasks[i].performanceType){
+          case "music":
+                icon = 'images/map-icon-music.png';
+          break;
+          case "theatre":
+                icon = 'images/map-icon-theatre.png';
+          break;
+          case "painting":
+                icon = 'images/map-icon-painting.png';
+          break;
+          default:
+                icon = 'images/map-icon-default.png';
+          break;
+        }
+
         var marker = new google.maps.Marker({
           position: latlng,
-          icon: 'images/map-icon-music.png',
+          icon: icon,
           map: map.instance
         });
         openInfoWindow(marker, map, tasks[i].username, tasks[i].createdAt, tasks[i].text);
@@ -159,9 +168,7 @@ if (Meteor.isClient) {
 
       function openInfoWindow(marker2, map, name, time, text){
         google.maps.event.addListener(marker2, 'click', function() {
-          infowindow.setContent("<strong>"+name+"</strong><br>"+text+"<br>"+time);
-          console.dir(marker2);
-
+          infowindow.setContent("<strong>"+name+"</strong><br>"+text+"<br>"+moment(time).fromNow());
           infowindow.open(map.instance,marker2);
           //infowindow.open();
         });
