@@ -1,47 +1,61 @@
 <head>
-  <title>Todo List</title>
+  <title>App</title>
 </head>
 
 <body>
+
+
+
+</body>
+
+<template name="home">
   <div class="container">
     <header>
-      <h1>Todo List ({{incompleteCount}})</h1>
+      <h1>App</h1>
       <h3>{{loc.lat}},{{loc.lng}}</h3>
 
       <label class="hide-completed">
         <input type="checkbox" checked="{{hideCompleted}}" />
-        Hide Completed Tasks
+        Only show recent check-ins
       </label>
 
       {{> loginButtons}}
 
       {{#if currentUser}}
-        <form class="new-task">
-          <input type="text" name="text" placeholder="What are you doing right now?" />
-          <!--<input type="">-->
-        </form>
+      <form class="new-task">
+        <input type="text" name="text" placeholder="What are you doing right now?" />
+        <!--<input type="">-->
+      </form>
       {{/if}}
     </header>
-
-    <ul>
-      {{#each tasks}}
-        {{> task}}
-      {{/each}}
-    </ul>
     <div class="map-container">
       {{> googleMap name="exampleMap" options=exampleMapOptions}}
     </div>
+    <ul>
+      {{#each tasks}}
+      {{> task}}
+      {{/each}}
+    </ul>
+
   </div>
-
-
-</body>
+</template>
 
 <template name="task">
   <li class="{{#if checked}}checked{{/if}}">
     <button class="delete">&times;</button>
 
-    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
+    <!--<input type="checkbox" checked="{{checked}}" class="toggle-checked" />-->
 
-    <span class="text"><strong>{{username}}</strong> - {{text}}<span class="location">{{lat}},{{lng}}</span></span>
+    <span class="text"><a href="{{ pathFor 'profile' }}"><strong>{{username}}</strong></a> - {{text}}<span class="location">{{createdAt}}</span></span>
   </li>
 </template>
+
+<template name="profile">
+  <div class="container">
+    <h1>Profile: {{this.username}}</h1>
+    {{#each usercheckins}}
+      {{> task}}
+    {{/each}}
+  </div>
+</template>
+

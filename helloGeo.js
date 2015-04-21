@@ -1,23 +1,26 @@
 Tasks = new Mongo.Collection("tasks");
 
+
 if (Meteor.isClient) {
   // This code only runs on the client
 
   Meteor.startup(function() {
-    GoogleMaps.load();
+    //
   });
 
-  Template.body.helpers({
+  Template.home.rendered = function(){
+    GoogleMaps.load();
+  };
+
+  Template.home.helpers({
     tasks: function () {
       if (Session.get("hideCompleted")) {
         // If hide completed is checked, filter tasks
-        var tasks = Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}})
+        return Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}})
       } else {
         // Otherwise, return all of the tasks
-        var tasks = Tasks.find({}, {sort: {createdAt: -1}});
-      } 
-        return tasks;
-
+        return Tasks.find({}, {sort: {createdAt: -1}});
+      }
     },
     hideCompleted: function () {
       return Session.get("hideCompleted");
@@ -31,17 +34,57 @@ if (Meteor.isClient) {
     },
     exampleMapOptions: function() {
     // Make sure the maps API has loaded
-    if (GoogleMaps.loaded()) {
-      // Map initialization options
-      return {
-        center: new google.maps.LatLng(50.168399799999996,-5.1223081),
-        zoom: 13
-      };
+      if (GoogleMaps.loaded()) {
+        // Map initialization options
+        styles = [];
+        return {
+          center: new google.maps.LatLng(50.158399799999996,-5.0923081),
+          zoom: 13,
+          disableDefaultUI: true,
+          styles: [
+            {
+              "stylers": [
+                { "visibility": "off" }
+              ]
+            },{
+              "featureType": "road",
+              "elementType": "geometry",
+              "stylers": [
+                { "color": "#ffffff" },
+                { "visibility": "simplified" }
+              ]
+            },{
+              "featureType": "water",
+              "elementType": "geometry",
+              "stylers": [
+                { "color": "#05a1f4" },
+                { "visibility": "on" }
+              ]
+            },{
+              "featureType": "landscape",
+              "elementType": "geometry",
+              "stylers": [
+                { "visibility": "on" },
+                { "color": "#000000" }
+              ]
+            },{
+              "featureType": "administrative",
+              "elementType": "labels.text.fill",
+              "stylers": [
+                { "visibility": "on" },
+                { "hue": "#ff2b00" },
+                { "saturation": 100 },
+                { "weight": 2.5 },
+                { "lightness": 100 }
+              ]
+            }
+          ]
+        };
+      }
     }
-  }
   });
 
-  Template.body.events({
+  Template.home.events({
     "submit .new-task": function (event) {
       // This function is called when the new task form is submitted
       var text = event.target.text.value;
@@ -78,6 +121,7 @@ if (Meteor.isClient) {
       return false;
     },
     "change .hide-completed input": function (event) {
+      console.log("click!");
       Session.set("hideCompleted", event.target.checked);
     }
   });
@@ -92,27 +136,24 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.body.onCreated(function() {
+  Template.home.onCreated(function() {
     // We can use the `ready` callback to interact with the map API once the map is ready.
     GoogleMaps.ready('exampleMap', function(map) {
+
       // Add a marker to the map once it's ready
       var tasks = Tasks.find().fetch();
-      console.dir(tasks);
-
 
       infowindow = new google.maps.InfoWindow({
                 content: "Loading..."
             });
 
       for(i = 0; i < tasks.length; i++){
-        console.log(tasks[i].lat);
         var latlng = new google.maps.LatLng(tasks[i].lat,tasks[i].lng);
         var marker = new google.maps.Marker({
           position: latlng,
+          icon: 'images/map-icon-music.png',
           map: map.instance
         });
-        console.log("marker "+i+": ");
-        console.dir(marker);
         openInfoWindow(marker, map, tasks[i].username, tasks[i].createdAt, tasks[i].text);
       }
 
@@ -129,11 +170,31 @@ if (Meteor.isClient) {
     });
   });
 
+  Template.profile.helpers({
+    usercheckins: function () {
+      return Tasks.find({username: this.username}, {sort: {createdAt: -1}})
+    }
+  });
+
+
+
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   }); 
 
-
-  //non-meteor globals
-  //var infowindow = null;
 }
+
+Router.map(function () {
+  this.route('home', {
+    path: '/',  //overrides the default '/home'
+  });
+
+  this.route('profile', {
+    path: '/profile/:username',
+    data: function () {
+      return Meteor.users.findOne({username: this.params.username})
+    },
+    template: 'profile'
+  });
+
+});
