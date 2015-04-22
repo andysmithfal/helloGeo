@@ -1,106 +1,143 @@
 /* CSS declarations go here */
 
 body {
-  padding-top: 50px;
+    padding-top: 50px;
 }
 
 .location{
-  font-size: 0.8em;
-  font-style: italic;
-  padding-left: 2%;
-  padding-right: 2%;
+    font-size: 0.8em;
+    font-style: italic;
+    padding-left: 2%;
+    padding-right: 2%;
 }
 
 #login-buttons {
-  display: block;
+    display: block;
 }
 
 h1 {
-  font-size: 1.5em;
-  margin: 0;
-  margin-bottom: 10px;
-  display: inline-block;
-  margin-right: 1em;
+    font-size: 1.5em;
+    margin: 0;
+    margin-bottom: 10px;
+    display: inline-block;
+    margin-right: 1em;
 }
 
 form {
-  margin-top: 10px;
-  margin-bottom: -10px;
-  position: relative;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+
 }
 
-.new-task input, .new-task select {
-  box-sizing: border-box;
-  padding: 10px 0;
-  width: 100%;
-  padding-right: 80px;
-  font-size: 1em;
+#checkin{
+    width: 104%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 10px 10px 10px 10px;
+    margin-left: -2%;
+    padding-left: 2%;
+    margin-right: -2%;
+    padding-right: 2%;
+
+    margin-top: 15px;
+    background-color: #5dddda;
+
+}
+
+#checkin h3 {
+    padding: 0;
+    margin: 0;
+}
+
+.new-task input,.new-task select {
+    box-sizing: border-box;
+    padding: 10px 0;
+    width: 100%;
+    /*padding-right: 80px;*/
+    font-size: 1em;
+}
+.new-task select{
+    font-size: 1.4em;
+    line-height: 30px;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.new-task button {
+    margin: 10px 0;
 }
 
 .new-task input:focus{
-  outline: 0;
+    outline: 0;
 }
 
-#checkinlist ul {
-  margin: 0;
-  padding: 0;
-  background: white;
+#checkinlist {
+    width: 100%;
+    margin: 0;
+    padding-left: 0;
+    background: white;
+    list-style:none;
 }
 
 .delete {
-  float: right;
-  font-weight: bold;
-  background: none;
-  font-size: 1em;
-  border: none;
-  position: relative;
+    float: right;
+    font-weight: bold;
+    background: none;
+    font-size: 1em;
+    border: none;
+    position: relative;
 }
 
 #checkinlist li {
-  position: relative;
-  list-style: none;
-  padding: 15px;
-  border-bottom: #eee solid 1px;
+    position: relative;
+    list-style: none;
+    padding: 15px;
+    border-bottom: #eee solid 1px;
 }
 
 #checkinlist li .text {
-  margin-left: 10px;
+    margin-left: 10px;
 }
 
 #checkinlist li.checked {
-  color: #888;
+    color: #888;
 }
-
-#checkinlist li.checked .text {
-  text-decoration: line-through;
-}
-
-#checkinlist li.private {
-  background: #eee;
-  border-color: #ddd;
-}
-
-
 
 
 
 .map-container {
-  width: 100%;
-  max-width: 100%;
-  height: 500px;
+    width: 100%;
+    max-width: 100%;
+    height: 500px;
 }
 
 @media (max-width: 600px) {
-  li {
-    padding: 12px 15px;
-  }
+    .map-container {
 
-  .search {
-    width: 150px;
-    clear: both;
-  }
+        height: 250px;
+    }
+    #checkinlist {
+        margin-top: 30px;
+    }
+    #checkinlist ul{
+        padding-top: 20px;
+    }
+    #checkinlist li {
+        margin: 0;
+    }
 
-  .new-task input {
-    padding-bottom: 5px;
-  }
+    #checkinlist li .text {
+        margin: 0px;
+    }
+
+    .search {
+        width: 100%;
+        clear: both;
+    }
+
+    .new-task input {
+        padding-bottom: 5px;
+    }
 }
