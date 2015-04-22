@@ -66,7 +66,8 @@ if (Meteor.isClient) {
                             "featureType": "water",
                             "elementType": "geometry",
                             "stylers": [
-                                { "color": "#05a1f4" },
+                                //{ "color": "#05a1f4" },
+                                { "color": "#ffffff" },
                                 { "visibility": "on" }
                             ]
                         },{
@@ -136,6 +137,9 @@ if (Meteor.isClient) {
     Template.task.helpers({
         date: function(){
             return moment(this.createdAt).fromNow();
+        },
+        isOwner: function () {
+            return this.owner === Meteor.userId();
         }
     });
     Template.editprofile.rendered = function(){
@@ -180,16 +184,22 @@ if (Meteor.isClient) {
 
                 switch(type){
                     case "music":
-                        icon = 'images/map-icon-music.png';
+                        icon = 'images/icon-new-music.png';
                         break;
                     case "theatre":
-                        icon = 'images/map-icon-theatre.png';
+                        icon = 'images/icon-new-theater.png';
                         break;
                     case "painting":
-                        icon = 'images/map-icon-painting.png';
+                        icon = 'images/icon-new-painting.png';
+                        break;
+                    case "markets":
+                        icon = 'images/icon-new-markets.png';
+                        break;
+                    case "alternative":
+                        icon = 'images/icon-new-alternative.png';
                         break;
                     default:
-                        icon = 'images/map-icon-default.png';
+                        icon = 'images/icon-new-other.png';
                         break;
                 }
 
@@ -303,6 +313,10 @@ if(Meteor.isServer){
             });
         },
         deleteCheckIn: function(id){
+            var taskToDelete = Tasks.findOne(id);
+            if(taskToDelete.owner !== Meteor.userId()){
+                throw new Meteor.Error("not-authorised");
+            }
             Tasks.remove(id);
         }
     });

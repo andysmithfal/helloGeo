@@ -18,23 +18,31 @@
     <div class="map-container">
         {{> googleMap name="exampleMap" options=exampleMapOptions}}
     </div>
-    <div class="container">
+    <div class="container" id="home">
         {{#if currentUser}}
-            <div id="checkin">
-                <h3>What are you doing?</h3>
-                <form class="new-task">
-                    <select name="performanceType">
-                        <option value="music">Music</option>
-                        <option value="theatre">Theatre</option>
-                        <option value="painting">Painting</option>
-                    </select>
-                    <input type="text" name="text" placeholder="Tell us about your performance..." />
-                    <button type="submit" name="btn" value="val" class="btn btn-info btn-block btn-lg">Share</button>
-                    <!--<input type="">-->
-                </form>
+            <div id="checkinContainer">
+                <div id="checkin">
+                    <h3>What are you doing?</h3>
+                    <form class="new-task" id="checkInForm">
+                        <select name="performanceType">
+                            <option value="music">Music</option>
+                            <option value="theatre">Theatre</option>
+                            <option value="painting">Painting</option>
+                            <option value="markets">Market</option>
+                            <option value="alternative">Alternative</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" name="text" placeholder="Tell us about your performance..." />
+                        <button type="submit" name="btn" value="val" class="btn btn-default btn-block btn-lg">Share</button>
+                        <!--<input type="">-->
+                    </form>
+                </div>
             </div>
         {{/if}}
+
+
         <ul id="checkinlist">
+            <h3>Recent check-ins</h3>
             {{#each tasks}}
                 {{> task}}
             {{/each}}
@@ -45,7 +53,7 @@
 
 <template name="task">
     <li class="{{#if checked}}checked{{/if}}">
-        <button class="delete">&times;</button>
+    {{#if isOwner}}<button class="delete">&times;</button>{{/if}}
 
         <!--<input type="checkbox" checked="{{checked}}" class="toggle-checked" />-->
 
@@ -57,9 +65,9 @@
     {{>nav}}
 
     <div class="container">
-        <h1>Profile: {{this.username}}</h1>
+        <h3>{{this.username}}'s Profile</h3>
         <h3>Bio:</h3>
-        <p>{{userprofile}}</p>
+        <p class="userbio">{{userprofile}}</p>
         <ul id="checkinlist">
             {{#each usercheckins}}
                 {{> task}}
@@ -78,7 +86,8 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Urbanow</a>
+                <!--<a class="navbar-brand" href="/">Urbanow</a>-->
+                <a class="navbar-brand"><img src="/images/menu-logo.png"/></a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -100,10 +109,11 @@
 <template name="editprofile">
     {{>nav}}
     <div class="container">
+        <h3>Hello {{getProfile.username}}, tell us about yourself</h3>
         <form class="editProfile">
             <textarea name="profiletext">{{getProfile.profiletext}}</textarea>
             <br>
-            <button name="editprofilesubmit">Submit</button>
+            <button name="editprofilesubmit" class="btn btn-warning btn-block btn-lg">Submit</button>
         </form>
 
     </div>
